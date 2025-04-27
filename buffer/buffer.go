@@ -15,6 +15,10 @@ type Buffer struct {
 	*bytes.Buffer
 }
 
+func (b *Buffer) IsZero() bool {
+	return b.Buffer == nil
+}
+
 func Get() Buffer {
 	b := pool.Get().(*bytes.Buffer)
 	b.Reset()
@@ -22,7 +26,9 @@ func Get() Buffer {
 }
 
 func (b *Buffer) Close() error {
-	pool.Put(b.Buffer)
-	b.Buffer = nil
+	if b != nil && b.Buffer != nil {
+		pool.Put(b.Buffer)
+		b.Buffer = nil
+	}
 	return nil
 }
